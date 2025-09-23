@@ -58,6 +58,7 @@ func RunShell(apiCtx api.ApiCtx, userInfo *api.UserInfo, args []string) error {
 	shell.AddCmd(cdCmd(ctx))
 	shell.AddCmd(getCmd(ctx))
 	shell.AddCmd(mgetCmd(ctx))
+	shell.AddCmd(mgetACmd(ctx))
 	shell.AddCmd(mkdirCmd(ctx))
 	shell.AddCmd(rmCmd(ctx))
 	shell.AddCmd(mvCmd(ctx))
