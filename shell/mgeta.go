@@ -17,27 +17,6 @@ import (
 )
 
 
-// checkNativeConversionSupport verifies that native conversion is available
-func checkNativeConversionSupport() error {
-	// Native conversion doesn't require external tools
-	// We could add additional checks here if needed
-	return nil
-}
-
-// convertRmdocToPdf converts a .rmdoc file to PDF using image-based rendering with optional OCR
-func convertRmdocToPdf(rmdocPath, pdfPath string, dpi int, enableOCR bool, tessPath, lang string, psm int, ctx *ShellCtxt) error {
-	// Try OCR-enabled rendering if requested
-	if enableOCR {
-		err := rmconvert.ConvertRmdocToSearchablePDF(rmdocPath, pdfPath, dpi, tessPath, lang, psm)
-		if err == nil {
-			return nil
-		}
-		fmt.Printf("OCR rendering failed (%v), falling back to non-OCR rendering\n", err)
-	}
-
-	// Use image-based rendering (supports v3/v5/v6)
-	return rmconvert.ConvertRmdocToImagePDF(rmdocPath, pdfPath, dpi)
-}
 
 
 func mgetACmd(ctx *ShellCtxt) *ishell.Cmd {
@@ -64,13 +43,6 @@ func mgetACmd(ctx *ShellCtxt) *ishell.Cmd {
 				return
 			}
 
-			// Check native conversion support unless skipping conversion
-			if !*skipConversion {
-				if err := checkNativeConversionSupport(); err != nil {
-					c.Err(err)
-					return
-				}
-			}
 
 			target := path.Clean(*outputDir)
 			if *removeDeleted && target == "." {
@@ -177,7 +149,7 @@ func mgetACmd(ctx *ShellCtxt) *ishell.Cmd {
 							} else {
 								c.Printf("converting [%s] to PDF (DPI: %d)...", rmdocPath, *dpi)
 							}
-							err = convertRmdocToPdf(rmdocPath, pdfPath, *dpi, *enableOCR, *tessPath, *tessLang, *tessPSM, ctx)
+							err = rmconvert.ConvertRmdocToPDF(rmdocPath, pdfPath, *dpi, *enableOCR, *tessPath, *tessLang, *tessPSM)
 							if err != nil {
 								c.Printf(" FAILED: %v\n", err)
 							} else {

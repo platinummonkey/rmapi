@@ -15,20 +15,6 @@ import (
 	"github.com/juruen/rmapi/util"
 )
 
-// convertRmdocToPdfCLI converts a .rmdoc file to PDF using image-based rendering with optional OCR
-func convertRmdocToPdfCLI(rmdocPath, pdfPath string, dpi int, enableOCR bool, tessPath, lang string, psm int) error {
-	// Try OCR-enabled rendering if requested
-	if enableOCR {
-		err := rmconvert.ConvertRmdocToSearchablePDF(rmdocPath, pdfPath, dpi, tessPath, lang, psm)
-		if err == nil {
-			return nil
-		}
-		fmt.Printf("OCR rendering failed (%v), falling back to non-OCR rendering\n", err)
-	}
-
-	// Use image-based rendering (supports v3/v5/v6)
-	return rmconvert.ConvertRmdocToImagePDF(rmdocPath, pdfPath, dpi)
-}
 
 func mgetaCommand(ctx *Context) Command {
 	return Command{
@@ -50,12 +36,6 @@ func mgetaCommand(ctx *Context) Command {
 				return err
 			}
 
-			// Check native conversion support unless skipping conversion
-			if !*skipConversion {
-				if err := checkNativeConversionSupport(); err != nil {
-					return err
-				}
-			}
 
 			target := path.Clean(*outputDir)
 			if *removeDeleted && target == "." {
@@ -157,7 +137,7 @@ func mgetaCommand(ctx *Context) Command {
 							} else {
 								fmt.Printf("converting [%s] to PDF (DPI: %d)...", rmdocPath, *dpi)
 							}
-							err = convertRmdocToPdfCLI(rmdocPath, pdfPath, *dpi, *enableOCR, *tessPath, *tessLang, *tessPSM)
+							err = rmconvert.ConvertRmdocToPDF(rmdocPath, pdfPath, *dpi, *enableOCR, *tessPath, *tessLang, *tessPSM)
 							if err != nil {
 								fmt.Printf(" FAILED: %v\n", err)
 							} else {

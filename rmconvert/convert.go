@@ -10,9 +10,20 @@ import (
 	"strings"
 )
 
-// ConvertRmdocToPDF is deprecated - use ConvertRmdocToImagePDF or ConvertRmdocToSearchablePDF instead
-func ConvertRmdocToPDF(rmdocPath, pdfPath string) error {
-	return fmt.Errorf("ConvertRmdocToPDF is deprecated - use ConvertRmdocToImagePDF instead")
+// ConvertRmdocToPDF converts a .rmdoc file to PDF with optional OCR
+// This is the main entry point for PDF conversion
+func ConvertRmdocToPDF(rmdocPath, pdfPath string, dpi int, enableOCR bool, tessPath, lang string, psm int) error {
+	// Try OCR-enabled rendering if requested
+	if enableOCR {
+		err := ConvertRmdocToSearchablePDF(rmdocPath, pdfPath, dpi, tessPath, lang, psm)
+		if err == nil {
+			return nil
+		}
+		fmt.Printf("OCR rendering failed (%v), falling back to non-OCR rendering\n", err)
+	}
+
+	// Use image-based rendering (supports v3/v5/v6)
+	return ConvertRmdocToImagePDF(rmdocPath, pdfPath, dpi)
 }
 
 // extractZip extracts a zip file to the specified directory
@@ -154,14 +165,4 @@ func getPageOrderAndDocDir(extractDir string) ([]string, string, error) {
 	}
 
 	return pageOrder, docDir, nil
-}
-
-// TestConversion is deprecated - vector PDF rendering has been removed
-func TestConversion(outputPath string) error {
-	return fmt.Errorf("TestConversion is deprecated - use image-based rendering instead")
-}
-
-// ConvertRMFileToPDF is deprecated - vector PDF rendering has been removed
-func ConvertRMFileToPDF(rmFilePath, pdfPath string) error {
-	return fmt.Errorf("ConvertRMFileToPDF is deprecated - use image-based rendering instead")
 }
