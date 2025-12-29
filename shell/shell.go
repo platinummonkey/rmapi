@@ -2,7 +2,6 @@ package shell
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/abiosoft/ishell"
 	"github.com/juruen/rmapi/api"
@@ -29,16 +28,6 @@ func setCustomCompleter(shell *ishell.Shell) {
 
 	completer := shellPathCompleter{cmdCompleter}
 	shell.CustomCompleter(completer)
-}
-
-func useHiddenFiles() bool {
-	val, ok := os.LookupEnv("RMAPI_USE_HIDDEN_FILES")
-
-	if !ok {
-		return false
-	}
-
-	return val != "0"
 }
 
 func RunShell(apiCtx api.ApiCtx, userInfo *api.UserInfo, args []string) error {

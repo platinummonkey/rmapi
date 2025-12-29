@@ -79,7 +79,7 @@ Offline Commands:
 		log.Error.Fatal("failed to build documents tree, last error: ", err)
 	}
 
-	err = shell.RunShell(ctx, userInfo, otherFlags)
+	err = shell.RunCLI(ctx, userInfo, otherFlags)
 
 	if err != nil {
 		log.Error.Println("Error: ", err)
