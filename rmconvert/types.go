@@ -2,7 +2,9 @@ package rmconvert
 
 import (
 	"fmt"
+	"image/color"
 	"math"
+	"strings"
 )
 
 // Point represents a point in a stroke with pressure, speed, direction, and width
@@ -162,4 +164,18 @@ func (page *Page) GetBoundingBox() (minX, minY, maxX, maxY float32) {
 func (page *Page) String() string {
 	return fmt.Sprintf("Page{Width: %.1f, Height: %.1f, Strokes: %d}",
 		page.Width, page.Height, len(page.Strokes))
+}
+
+// parseColor converts a color string to color.RGBA
+func parseColor(colorStr string) color.RGBA {
+	switch strings.ToLower(colorStr) {
+	case "black":
+		return color.RGBA{0, 0, 0, 255}
+	case "white":
+		return color.RGBA{255, 255, 255, 255}
+	case "#777777", "gray", "grey":
+		return color.RGBA{119, 119, 119, 255}
+	default:
+		return color.RGBA{0, 0, 0, 255}
+	}
 }

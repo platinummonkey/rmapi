@@ -10,91 +10,9 @@ import (
 	"strings"
 )
 
-// ConvertRmdocToPDF converts a .rmdoc file directly to PDF using native Go libraries
+// ConvertRmdocToPDF is deprecated - use ConvertRmdocToImagePDF or ConvertRmdocToSearchablePDF instead
 func ConvertRmdocToPDF(rmdocPath, pdfPath string) error {
-	// Create temporary directory for extraction
-	tempDir, err := os.MkdirTemp("", "rmdoc_convert_*")
-	if err != nil {
-		return fmt.Errorf("failed to create temp directory: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
-
-	// Extract .rmdoc file (it's a zip archive)
-	err = extractZip(rmdocPath, tempDir)
-	if err != nil {
-		return fmt.Errorf("failed to extract .rmdoc: %v", err)
-	}
-
-	// Find the document directory and get page order
-	pageOrder, docDir, err := getPageOrderAndDocDir(tempDir)
-	if err != nil {
-		return fmt.Errorf("failed to get page order: %v", err)
-	}
-
-	if len(pageOrder) == 0 {
-		return fmt.Errorf("no pages found in document")
-	}
-
-	// Create directory for PDF if it doesn't exist
-	pdfDir := filepath.Dir(pdfPath)
-	if err := os.MkdirAll(pdfDir, 0755); err != nil {
-		return fmt.Errorf("failed to create PDF directory: %v", err)
-	}
-
-	// Convert each .rm file to PDF
-	var tempPdfs []string
-	successCount := 0
-
-	for i, pageID := range pageOrder {
-		rmFile := filepath.Join(docDir, pageID+".rm")
-		if _, err := os.Stat(rmFile); err != nil {
-			// Page might not exist, skip it
-			fmt.Printf("Warning: page %s not found, skipping\n", pageID)
-			continue
-		}
-
-		tempPdf := filepath.Join(tempDir, fmt.Sprintf("page_%d.pdf", i+1))
-		err := convertRMToPDF(rmFile, tempPdf)
-		if err != nil {
-			// Print warning but continue with other pages
-			fmt.Printf("Warning: failed to convert page %s: %v\n", pageID, err)
-			continue
-		}
-
-		tempPdfs = append(tempPdfs, tempPdf)
-		successCount++
-	}
-
-	if successCount == 0 {
-		return fmt.Errorf("no pages were successfully converted")
-	}
-
-	// Merge PDFs
-	return MergePDFs(tempPdfs, pdfPath)
-}
-
-// convertRMToPDF converts a single .rm file to PDF
-func convertRMToPDF(rmFile, pdfFile string) error {
-	// Parse .rm file
-	page, err := ParseRMFile(rmFile)
-	if err != nil {
-		// If parsing fails, try to create a test page to verify the pipeline works
-		fmt.Printf("Warning: failed to parse %s, creating empty page: %v\n", rmFile, err)
-		page = &Page{
-			Width:   1404,
-			Height:  1872,
-			Strokes: []Stroke{},
-		}
-	}
-
-	// Convert directly to PDF using canvas
-	file, err := os.Create(pdfFile)
-	if err != nil {
-		return fmt.Errorf("failed to create PDF file: %v", err)
-	}
-	defer file.Close()
-
-	return page.ConvertToPDF(file)
+	return fmt.Errorf("ConvertRmdocToPDF is deprecated - use ConvertRmdocToImagePDF instead")
 }
 
 // extractZip extracts a zip file to the specified directory
@@ -238,28 +156,12 @@ func getPageOrderAndDocDir(extractDir string) ([]string, string, error) {
 	return pageOrder, docDir, nil
 }
 
-// TestConversion creates a test page and converts it to PDF for testing
+// TestConversion is deprecated - vector PDF rendering has been removed
 func TestConversion(outputPath string) error {
-	// Create test page
-	page := CreateTestPage()
-
-	// Convert to PDF
-	file, err := os.Create(outputPath)
-	if err != nil {
-		return fmt.Errorf("failed to create test PDF: %v", err)
-	}
-	defer file.Close()
-
-	err = page.ConvertToPDF(file)
-	if err != nil {
-		return fmt.Errorf("failed to convert test page: %v", err)
-	}
-
-	fmt.Printf("Test PDF created: %s\n", outputPath)
-	return nil
+	return fmt.Errorf("TestConversion is deprecated - use image-based rendering instead")
 }
 
-// ConvertRMFileToPDF converts a single .rm file to PDF for testing
+// ConvertRMFileToPDF is deprecated - vector PDF rendering has been removed
 func ConvertRMFileToPDF(rmFilePath, pdfPath string) error {
-	return convertRMToPDF(rmFilePath, pdfPath)
+	return fmt.Errorf("ConvertRMFileToPDF is deprecated - use image-based rendering instead")
 }

@@ -35,14 +35,8 @@ func convertRmdocToPdf(rmdocPath, pdfPath string, dpi int, enableOCR bool, tessP
 		fmt.Printf("OCR rendering failed (%v), falling back to non-OCR rendering\n", err)
 	}
 
-	// Try image-based rendering (now with native v3/v5/v6 support)
-	err := rmconvert.ConvertRmdocToImagePDF(rmdocPath, pdfPath, dpi)
-	if err == nil {
-		return nil
-	}
-
-	// Fallback to direct PDF rendering
-	return rmconvert.ConvertRmdocToPDFWithFallback(rmdocPath, pdfPath)
+	// Use image-based rendering (supports v3/v5/v6)
+	return rmconvert.ConvertRmdocToImagePDF(rmdocPath, pdfPath, dpi)
 }
 
 
