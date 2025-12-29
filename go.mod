@@ -1,6 +1,6 @@
 module github.com/juruen/rmapi
 
-go 1.23.0
+go 1.24.0
 
 replace github.com/flynn-archive/go-shlex => github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 
@@ -15,7 +15,8 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/tdewolff/canvas v0.0.0-20250923071733-b2b2ba99a987
 	github.com/unidoc/unipdf/v3 v3.6.1
-	golang.org/x/sync v0.14.0
+	golang.org/x/net v0.48.0
+	golang.org/x/sync v0.19.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -59,11 +60,10 @@ require (
 	github.com/tdewolff/minify/v2 v2.23.4 // indirect
 	github.com/tdewolff/parse/v2 v2.8.0 // indirect
 	github.com/wcharczuk/go-chart/v2 v2.1.2 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/crypto v0.46.0 // indirect
 	golang.org/x/image v0.27.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
 	gonum.org/v1/plot v0.16.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

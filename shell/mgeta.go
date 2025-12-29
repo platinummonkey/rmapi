@@ -24,8 +24,24 @@ func checkNativeConversionSupport() error {
 	return nil
 }
 
-// convertRmdocToPdf converts a .rmdoc file to PDF using native Go conversion with fallback
-func convertRmdocToPdf(rmdocPath, pdfPath string, ctx *ShellCtxt) error {
+// convertRmdocToPdf converts a .rmdoc file to PDF using image-based rendering with optional OCR
+func convertRmdocToPdf(rmdocPath, pdfPath string, dpi int, enableOCR bool, tessPath, lang string, psm int, ctx *ShellCtxt) error {
+	// Try OCR-enabled rendering if requested
+	if enableOCR {
+		err := rmconvert.ConvertRmdocToSearchablePDF(rmdocPath, pdfPath, dpi, tessPath, lang, psm)
+		if err == nil {
+			return nil
+		}
+		fmt.Printf("OCR rendering failed (%v), falling back to non-OCR rendering\n", err)
+	}
+
+	// Try image-based rendering (now with native v3/v5/v6 support)
+	err := rmconvert.ConvertRmdocToImagePDF(rmdocPath, pdfPath, dpi)
+	if err == nil {
+		return nil
+	}
+
+	// Fallback to direct PDF rendering
 	return rmconvert.ConvertRmdocToPDFWithFallback(rmdocPath, pdfPath)
 }
 
@@ -33,7 +49,7 @@ func convertRmdocToPdf(rmdocPath, pdfPath string, ctx *ShellCtxt) error {
 func mgetACmd(ctx *ShellCtxt) *ishell.Cmd {
 	return &ishell.Cmd{
 		Name:      "mgeta",
-		Help:      "recursively copy remote directory to local and convert to PDF (native Go conversion)\n\nUsage: mgeta [options] <source_dir>\n\nOptions:\n  -i    incremental mode (only download/convert if modified)\n  -o    output directory (default: current directory)\n  -d    remove deleted/moved files from local\n  -s    skip PDF conversion, only download .rmdoc files\n\nFeatures:\n  - Native Go conversion (no external dependencies)\n  - Multi-page PDF support with proper page ordering\n  - Preserves stroke data and tool properties\n  - Fast parallel-safe conversion\n\nExample:\n  mgeta -o ~/Documents/ReMarkable .",
+		Help:      "recursively copy remote directory to local and convert to PDF (image-based rendering)\n\nUsage: mgeta [options] <source_dir>\n\nOptions:\n  -i           incremental mode (only download/convert if modified)\n  -o           output directory (default: current directory)\n  -d           remove deleted/moved files from local\n  -s           skip PDF conversion, only download .rmdoc files\n  -dpi         render DPI (default: 300, higher = better quality but larger files)\n  -ocr         enable OCR for searchable PDFs (requires tesseract)\n  -tess-path   path to tesseract binary (default: tesseract)\n  -tess-lang   tesseract language (default: eng)\n  -tess-psm    tesseract page segmentation mode (default: 6)\n\nFeatures:\n  - Image-based PDF rendering (high compatibility)\n  - Optional OCR support for searchable PDFs (like remarkable-searchable)\n  - Multi-page PDF support with proper page ordering\n  - Preserves stroke data and tool properties\n  - Configurable DPI for quality/size trade-off\n  - Fast parallel-safe conversion\n\nExamples:\n  mgeta -o ~/Documents/ReMarkable -dpi 300 .\n  mgeta -o ~/Documents/ReMarkable -dpi 300 -ocr -tess-lang eng .",
 		Completer: createDirCompleter(ctx),
 		Func: func(c *ishell.Context) {
 			flagSet := flag.NewFlagSet("mgeta", flag.ContinueOnError)
@@ -41,6 +57,11 @@ func mgetACmd(ctx *ShellCtxt) *ishell.Cmd {
 			outputDir := flagSet.String("o", ".", "output folder")
 			removeDeleted := flagSet.Bool("d", false, "remove deleted/moved")
 			skipConversion := flagSet.Bool("s", false, "skip PDF conversion, only download .rmdoc files")
+			dpi := flagSet.Int("dpi", 300, "render DPI (default: 300)")
+			enableOCR := flagSet.Bool("ocr", false, "enable OCR for searchable PDFs")
+			tessPath := flagSet.String("tess-path", "tesseract", "path to tesseract binary")
+			tessLang := flagSet.String("tess-lang", "eng", "tesseract language")
+			tessPSM := flagSet.Int("tess-psm", 6, "tesseract page segmentation mode")
 
 			if err := flagSet.Parse(c.Args); err != nil {
 				if err != flag.ErrHelp {
@@ -157,8 +178,12 @@ func mgetACmd(ctx *ShellCtxt) *ishell.Cmd {
 						}
 
 						if needsPdfUpdate {
-							c.Printf("converting [%s] to PDF...", rmdocPath)
-							err = convertRmdocToPdf(rmdocPath, pdfPath, ctx)
+							if *enableOCR {
+								c.Printf("converting [%s] to searchable PDF (DPI: %d, OCR: %s)...", rmdocPath, *dpi, *tessLang)
+							} else {
+								c.Printf("converting [%s] to PDF (DPI: %d)...", rmdocPath, *dpi)
+							}
+							err = convertRmdocToPdf(rmdocPath, pdfPath, *dpi, *enableOCR, *tessPath, *tessLang, *tessPSM, ctx)
 							if err != nil {
 								c.Printf(" FAILED: %v\n", err)
 							} else {
