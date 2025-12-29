@@ -281,7 +281,9 @@ func addOCRTextToPDF(pdfPath string, ocrResults []PageOCR, dpi int) error {
 		return fmt.Errorf("failed to get page dimensions: %v", err)
 	}
 
-	pxToPt := 72.0 / float64(dpi)
+	// NOTE: pdfcpu imports PNGs without DPI metadata as 72 DPI (1 pixel = 1 point)
+	// So we use 1:1 pixel-to-point mapping regardless of render DPI
+	pxToPt := 1.0
 
 	for _, ocr := range ocrResults {
 		if ocr.PageNumber > len(pageDims) {
@@ -321,12 +323,20 @@ func buildInvisibleTextStream(ocr PageOCR, pageHpt float64, pxToPt float64) []by
 
 	lastFontSize := -1.0
 	for _, word := range ocr.Words {
+		// Convert OCR bounding box from pixels to PDF points (pxToPt = 1.0)
 		x1pt := float64(word.X1) * pxToPt
-		y2ptFromTop := float64(word.Y2) * pxToPt
-		ypt := pageHpt - y2ptFromTop
+		y1pt := float64(word.Y1) * pxToPt
+		y2pt := float64(word.Y2) * pxToPt
 
-		hpt := float64(word.Y2-word.Y1) * pxToPt
+		// Calculate text height for font sizing
+		hpt := y2pt - y1pt
 		fontSize := clamp(hpt*0.85, 4, 72)
+
+		// PDF coordinate system: (0,0) at bottom-left, Y increases upward
+		// OCR coordinates: (0,0) at top-left, Y increases downward
+		// pdfcpu embeds images with Y-flip, so we need to flip OCR coordinates
+		// Position text at baseline (bottom of bbox): y2
+		ypt := pageHpt - y2pt
 
 		if abs(fontSize-lastFontSize) > 0.25 {
 			fmt.Fprintf(w, "/F0 %.2f Tf\n", fontSize)
