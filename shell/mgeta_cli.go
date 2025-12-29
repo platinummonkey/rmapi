@@ -68,7 +68,7 @@ func mgetaCommand(ctx *Context) Command {
 			}
 			srcName := argRest[0]
 
-			node, err := ctx.api.Filetree().NodeByPath(srcName, ctx.node)
+			node, err := ctx.api.Filetree().NodeByPath(srcName, ctx.api.Filetree().Root())
 			if err != nil || node.IsFile() {
 				return errors.New("directory doesn't exist")
 			}

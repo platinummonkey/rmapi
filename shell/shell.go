@@ -42,16 +42,11 @@ func RunShell(apiCtx api.ApiCtx, userInfo *api.UserInfo, args []string) error {
 
 	shell.SetPrompt(ctx.prompt())
 
-	shell.AddCmd(lsCmd(ctx))
-	shell.AddCmd(pwdCmd(ctx))
-	shell.AddCmd(cdCmd(ctx))
 	shell.AddCmd(getCmd(ctx))
 	shell.AddCmd(mgetCmd(ctx))
 	shell.AddCmd(mgetACmd(ctx))
 	shell.AddCmd(versionCmd(ctx))
-	shell.AddCmd(statCmd(ctx))
 	shell.AddCmd(getACmd(ctx))
-	shell.AddCmd(findCmd(ctx))
 	shell.AddCmd(accountCmd(ctx))
 	shell.AddCmd(refreshCmd(ctx))
 

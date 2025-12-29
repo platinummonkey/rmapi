@@ -7,36 +7,6 @@ import (
 // Stub implementations for commands that will be removed in later tasks
 // These are temporary to keep the code compiling
 
-func lsCommand(ctx *Context) Command {
-	return Command{
-		Name: "ls",
-		Help: "list contents (will be removed in simplification)",
-		Func: func(ctx *Context, args []string) error {
-			return fmt.Errorf("ls command not yet converted to CLI")
-		},
-	}
-}
-
-func pwdCommand(ctx *Context) Command {
-	return Command{
-		Name: "pwd",
-		Help: "print working directory (will be removed in simplification)",
-		Func: func(ctx *Context, args []string) error {
-			return fmt.Errorf("pwd command not yet converted to CLI")
-		},
-	}
-}
-
-func cdCommand(ctx *Context) Command {
-	return Command{
-		Name: "cd",
-		Help: "change directory (will be removed in simplification)",
-		Func: func(ctx *Context, args []string) error {
-			return fmt.Errorf("cd command not yet converted to CLI")
-		},
-	}
-}
-
 func getCommand(ctx *Context) Command {
 	return Command{
 		Name: "get",
@@ -58,32 +28,12 @@ func mgetCommand(ctx *Context) Command {
 }
 
 
-func statCommand(ctx *Context) Command {
-	return Command{
-		Name: "stat",
-		Help: "show file status (will be removed in simplification)",
-		Func: func(ctx *Context, args []string) error {
-			return fmt.Errorf("stat command not yet converted to CLI")
-		},
-	}
-}
-
 func getaCommand(ctx *Context) Command {
 	return Command{
 		Name: "geta",
 		Help: "download and convert to PDF (will be removed in simplification)",
 		Func: func(ctx *Context, args []string) error {
 			return fmt.Errorf("geta command not yet converted to CLI")
-		},
-	}
-}
-
-func findCommand(ctx *Context) Command {
-	return Command{
-		Name: "find",
-		Help: "search for files (will be removed in simplification)",
-		Func: func(ctx *Context, args []string) error {
-			return fmt.Errorf("find command not yet converted to CLI")
 		},
 	}
 }

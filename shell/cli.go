@@ -45,16 +45,11 @@ func RunCLI(apiCtx api.ApiCtx, userInfo *api.UserInfo, args []string) error {
 
 	// Register all commands
 	commands := make(map[string]Command)
-	registerCommand(commands, lsCommand(ctx))
-	registerCommand(commands, pwdCommand(ctx))
-	registerCommand(commands, cdCommand(ctx))
 	registerCommand(commands, getCommand(ctx))
 	registerCommand(commands, mgetCommand(ctx))
 	registerCommand(commands, mgetaCommand(ctx))
 	registerCommand(commands, versionCommand(ctx))
-	registerCommand(commands, statCommand(ctx))
 	registerCommand(commands, getaCommand(ctx))
-	registerCommand(commands, findCommand(ctx))
 	registerCommand(commands, accountCommand(ctx))
 	registerCommand(commands, refreshCommand(ctx))
 
