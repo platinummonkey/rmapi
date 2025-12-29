@@ -9,6 +9,21 @@ import (
 // UnmarshalBinary implements encoding.UnmarshalBinary for
 // transforming bytes into a Rm page
 func (rm *Rm) UnmarshalBinary(data []byte) error {
+	// Check if this is a v6 file
+	if len(data) >= HeaderLen {
+		header := string(data[:HeaderLen])
+		if header == HeaderV6 {
+			// Use v6 parser
+			v6rm, err := ParseV6(data)
+			if err != nil {
+				return err
+			}
+			*rm = *v6rm
+			return nil
+		}
+	}
+
+	// Use v3/v5 parser
 	r := newReader(data)
 	if err := r.checkHeader(); err != nil {
 		return err
@@ -66,12 +81,14 @@ func (r *reader) checkHeader() error {
 	}
 
 	switch string(buf) {
+	case HeaderV6:
+		r.version = V6
 	case HeaderV5:
 		r.version = V5
 	case HeaderV3:
 		r.version = V3
 	default:
-		return fmt.Errorf("Unknown header")
+		return fmt.Errorf("Unknown header: %s", string(buf))
 	}
 
 	return nil
@@ -104,8 +121,8 @@ func (r *reader) readLine() (Line, error) {
 		return line, fmt.Errorf("Failed to read line")
 	}
 
-	// this new attribute has been added in v5
-	if r.version == V5 {
+	// this new attribute has been added in v5 and is also in v6
+	if r.version == V5 || r.version == V6 {
 		if err := binary.Read(r, binary.LittleEndian, &line.Unknown); err != nil {
 			return line, fmt.Errorf("Failed to read line")
 		}
