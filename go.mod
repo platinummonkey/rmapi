@@ -5,11 +5,9 @@ go 1.24.0
 replace github.com/flynn-archive/go-shlex => github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 
 require (
-	github.com/abiosoft/ishell v2.0.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
-	github.com/ogier/pflag v0.0.1
 	github.com/pdfcpu/pdfcpu v0.11.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
@@ -29,18 +27,13 @@ require (
 	github.com/BurntSushi/xgbutil v0.0.0-20190907113008-ad855c713046 // indirect
 	github.com/ByteArena/poly2tri-go v0.0.0-20170716161910-d102ad91854f // indirect
 	github.com/Kagami/go-avif v0.1.0 // indirect
-	github.com/abiosoft/readline v0.0.0-20180607040430-155bce2042db // indirect
 	github.com/adrg/strutil v0.1.0 // indirect
 	github.com/adrg/sysfont v0.1.0 // indirect
 	github.com/adrg/xdg v0.2.1 // indirect
 	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/benoitkugler/textlayout v0.3.1 // indirect
 	github.com/benoitkugler/textprocessing v0.0.3 // indirect
-	github.com/chzyer/logex v1.1.10 // indirect
-	github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/fatih/color v1.9.0 // indirect
-	github.com/flynn-archive/go-shlex v0.0.0-20150515145356-3f9db97f8568 // indirect
 	github.com/go-fonts/latin-modern v0.3.3 // indirect
 	github.com/go-text/typesetting v0.3.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
@@ -49,8 +42,6 @@ require (
 	github.com/hhrutter/tiff v1.0.2 // indirect
 	github.com/kolesa-team/go-webp v1.0.5 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
-	github.com/mattn/go-colorable v0.1.6 // indirect
-	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
@@ -62,7 +53,6 @@ require (
 	github.com/wcharczuk/go-chart/v2 v2.1.2 // indirect
 	golang.org/x/crypto v0.46.0 // indirect
 	golang.org/x/image v0.27.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 	gonum.org/v1/plot v0.16.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
