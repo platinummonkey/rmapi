@@ -398,13 +398,11 @@ func appendTextStreamToPage(ctx *model.Context, pageNr int, content []byte) erro
 		return err
 	}
 
-	// Create new stream
-	sd := types.StreamDict{
-		Dict: types.Dict(map[string]types.Object{
-			"Length": types.Integer(len(content)),
-		}),
-		Content: content,
-	}
+	// Create new stream dict properly
+	length := int64(len(content))
+	sd := types.NewStreamDict(types.Dict{}, length, nil, nil, nil)
+	sd.Content = content
+	sd.Raw = content
 
 	newIR, err := x.IndRefForNewObject(sd)
 	if err != nil {
